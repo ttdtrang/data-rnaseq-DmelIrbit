@@ -1,0 +1,14 @@
+Package: data.rnaseq.DmelIrbit
+Title: Data package containing transcriptomic profiles of IRBIT mutant fruit flies 
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Trang",
+           family = "Tran",
+           role = c("aut", "cre"),
+           email = "first.last@example.com",
+           comment = c(ORCID = "0000-0002-4219-2990"))
+Description: Gene expression profiling of IRBIT mutant flies (fruit fly) (PMID: 32179478)
+Depends: R (>= 3.5.3)
+License: CC-BY 
+Encoding: UTF-8
+LazyData: true
