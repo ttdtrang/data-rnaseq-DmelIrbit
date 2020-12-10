@@ -12,6 +12,9 @@ library(Biobase)
 
 options(stringsAsFactors = FALSE)
 knitr::opts_chunk$set(echo = TRUE)
+
+file.metadata_sra = 'PRJNA432208_metadata_cleaned.tsv'
+file.metadata_fastq = 'fastq_metadata.tsv'
 ```
 
 ## Overview
@@ -41,29 +44,28 @@ ExpressionSet(assayData = gene.assayData)
 ### Phenotypic data
 
 ```{r}
-metadata = read.table(file.path(Sys.getenv('DBDIR'),
-                                'PRJNA432208_metadata_cleaned.tsv'), sep = '\t', header = TRUE)
-
-
+meta1 = read.table(file.path(Sys.getenv('DBDIR'), file.metadata_sra), sep = '\t', header = TRUE)
+meta2 = read.table(file.path(Sys.getenv('DBDIR'), file.metadata_fastq), sep = '\t', header = TRUE)
 ```
 
 ```{r}
 starLog = read.table(file.path(Sys.getenv('DBDIR'),
                                'starLog.final.tsv'), sep = '\t',header=TRUE)
-meta1 = data.frame(t(starLog[,-c(1,2)])) %>%
+meta3 = data.frame(t(starLog[,-c(1,2)])) %>%
     set_colnames(paste0('starAlignment.',starLog[[1]])) %>%
     set_rownames(colnames(starLog)[-c(1,2)])
-meta1$RunId = rownames(meta1)
-meta1$BiosampleId <- meta1$RunId
-meta1$RunId <- NULL
-str(meta1)
+meta3$RunId = rownames(meta3)
+meta3$BiosampleId <- meta3$RunId
+meta3$RunId <- NULL
+str(meta3)
 ```
 
 ```{r}
 libnames <- colnames(gene.assayData$exprs) %>% as.character()
 allMeta <- data.frame('BiosampleId' = libnames) %>%
-    plyr::join(y = metadata, by = 'BiosampleId', type = 'left')  %>%
-    plyr::join(y = meta1, by = 'BiosampleId', type = 'left') %>%
+    plyr::join(y = meta1, by = 'BiosampleId', type = 'left')  %>%
+    plyr::join(y = meta2, by = 'RunId', type = 'left')  %>%
+    plyr::join(y = meta3, by = 'BiosampleId', type = 'left') %>%
     set_rownames(libnames)
 colDescription = colnames(allMeta)
 colDescription[grepl('starAlignment', colnames(allMeta))] = starLog[[2]]
